@@ -97,3 +97,102 @@ VALUES
     ('vale alimentacão');
     
 
+DELIMITER !!
+CREATE PROCEDURE AddClientes(
+    IN nome_completo VARCHAR(100),
+    IN apelido VARCHAR(50),
+    IN cpf VARCHAR(14),
+    IN data_nascimento DATE,
+    IN telefone VARCHAR(15),
+    IN email VARCHAR(100),
+    IN bairro VARCHAR(100),
+    IN cidade VARCHAR(50),
+    IN estado VARCHAR(2)
+)
+BEGIN
+    INSERT INTO clientes (nome_completo, apelido, cpf, data_nascimento, telefone, email, bairro, cidade, estado) 
+    VALUES (nome_completo, apelido, cpf, data_nascimento, telefone, email, bairro, cidade, estado);
+END  !!
+
+CREATE PROCEDURE AddProdutos(   
+    IN nome VARCHAR(50),
+    IN preco DECIMAL(8,2),
+    IN tamanho VARCHAR(50),
+    IN id_categoria INT,
+    IN id_recheio INT 
+)
+BEGIN
+    IF id_recheio IS NULL THEN
+        SET id_recheio = null; 
+    END IF;
+    IF id_recheio IS NULL THEN
+        INSERT INTO produto (nome, preco, tamanho, id_categoria) 
+        VALUES (nome, preco, tamanho, id_categoria);
+    ELSE
+        INSERT INTO produto (nome, preco, tamanho, id_categoria, id_recheio) 
+        VALUES (nome, preco, tamanho, id_categoria, id_recheio);
+    END IF;
+END !!
+
+CREATE PROCEDURE AddRecheios(
+    IN id_recheio INT,
+    IN id_produto INT
+)
+BEGIN
+    INSERT INTO recheio_produto (id_produto, id_recheio) 
+    VALUES (id_produto, id_recheio);
+END !!
+DELIMITER ;
+
+## inserindo dados dos clientes
+
+CALL AddClientes('Rodigo da Silva', 'Rodrigo', '123.456.784-01', '2001-03-09', '235123431', 'rodrigo@email.com', 'humildes', 'FSA', 'BA');
+CALL AddClientes('Carlos henrique', 'Carlos', '345.609.342-01', '2003-08-03', '750304859', 'carlos@email.com', 'Aviario', 'FSA', 'BA');
+CALL AddClientes('Yasmin nere', 'Yasmin', '503.987.545-01', '2004-03-14', '75395030', 'carlos@email.com', 'feira 7', 'FSA', 'BA');
+CALL AddClientes('Lucia Oliveira', 'Lucia', '789.456.123-45', '2008-09-25', '987654321', 'lucia@email.com', 'Centro', 'FSA', 'BA');
+CALL AddClientes('Pedro Santos', 'Pedro', '987.654.321-01', '2010-03-12', '654321987', 'pedro@email.com', 'Bairro Alegre', 'FSA', 'BA');
+CALL AddClientes('Camila Silva', 'Camila', '234.567.890-12', '2009-08-18', '876543210', 'camila@email.com', 'Nova Cidade', 'FSA', 'BA');
+CALL AddClientes('Gustavo Henrique', 'Gustavo', '123.456.789-01', '2005-05-09', '123456789', 'gustavo@email.com', 'Centro', 'FSA', 'BA');
+CALL AddClientes('Vitor Hugo', 'Vitor', '345.609.456-01', '2000-04-03', '12333124', 'vitor@email.com', 'Aviario', 'FSA', 'BA');
+
+## inserindo dados dos produtos
+
+CALL AddProdutos('Suco de laranja', 2.00, '1L', 5, null);
+CALL AddProdutos('Suco de laranja', 5.00, '2L', 5, null);
+CALL AddProdutos('Refrigerante de cola', 3.50, '1L', 5, null);
+CALL AddProdutos('Refrigerante de guaraná', 4.00, '1L', 5, null);
+CALL AddProdutos('Refrigerante de fanta', 6.00, '2L', 5, null);
+CALL AddProdutos('Suco de acerola', 7.00, '2L', 5, null);
+CALL AddProdutos('Limonada', 3.50, '1L', 5, null);
+CALL AddProdutos('Tubaina', 1.50, '350 ML', 5, null);
+CALL AddProdutos('Pastel de carne', 5.00, 'M', 1, 1);
+CALL AddProdutos('Pastel de frango', 6.00, 'G', 1, 2);
+CALL AddProdutos('Pastel de queijo', 6.00, 'G', 1, 3);
+CALL AddProdutos('Pastel de palmito', 3.00, 'P', 2, 4);
+CALL AddProdutos('Pastel de queijo cheeder', 6.00, 'G', 1, 3);
+CALL AddProdutos('Pastel de espinafre', 5.50, 'G', 2, 5);
+CALL AddProdutos('Pastel de queijo e goiabada', 6.50, 'M', 4, 9);
+CALL AddProdutos('Pastel de camarão', 6.50, 'M', 4, 6);
+CALL AddProdutos('Pastel de bacalhau', 6.50, 'M', 4, 7);
+CALL AddProdutos('Pastel de dora aventureira', 6.50, 'M', 4, 7);
+CALL AddProdutos('Pastel de bacon', 6.50, 'M', 4, 11);
+CALL AddProdutos('Pastel de bacon grande', 7.00, 'G', 4, 11);
+
+## inserindo dados dos recheios
+
+CALL AddRecheios(1, 1);
+CALL AddRecheios(2, 2);
+CALL AddRecheios(3, 3);
+CALL AddRecheios(4, 4);
+CALL AddRecheios(5, 5);
+CALL AddRecheios(6, 6);
+CALL AddRecheios(7, 7);
+CALL AddRecheios(8, 8);
+CALL AddRecheios(9, 9);
+CALL AddRecheios(10, 10);
+CALL AddRecheios(11, 11);
+
+SELECT * FROM recheio_produto;
+SELECT * FROM categoria;
+SELECT * FROM recheio; 
+SELECT * FROM produto;
