@@ -16,7 +16,8 @@ CREATE TABLE clientes (
 
 CREATE TABLE categoria (
     id_categoria int primary key auto_increment,
-    nome varchar(50)
+    nome varchar(50),
+    total_vendas INT DEFAULT 0
 );
 
 CREATE TABLE forma_pagamentos (
@@ -45,6 +46,7 @@ CREATE TABLE produto (
     tamanho VARCHAR(50),
     id_categoria INT NOT NULL,
     id_recheio INT NULL,
+    quantidade_em_estoque INT DEFAULT 0,
     FOREIGN KEY (id_categoria) REFERENCES categoria(id_categoria),
     FOREIGN KEY (id_recheio) REFERENCES recheio(id_recheio)
 );
@@ -97,7 +99,8 @@ VALUES
     ('vale alimentacão');
     
 
-DELIMITER !!
+DELIMITER !PROCEDIMENTO!
+-- Procedimento para adicionar novos clientes à tabela de clientes.
 CREATE PROCEDURE AddClientes(
     IN nome_completo VARCHAR(100),
     IN apelido VARCHAR(50),
@@ -108,20 +111,18 @@ CREATE PROCEDURE AddClientes(
     IN bairro VARCHAR(100),
     IN cidade VARCHAR(50),
     IN estado VARCHAR(2)
-)
-BEGIN
+) BEGIN
     INSERT INTO clientes (nome_completo, apelido, cpf, data_nascimento, telefone, email, bairro, cidade, estado) 
     VALUES (nome_completo, apelido, cpf, data_nascimento, telefone, email, bairro, cidade, estado);
-END  !!
-
+END  !PROCEDIMENTO!
+-- Procedimento para adicionar novos produtos à tabela de produtos.
 CREATE PROCEDURE AddProdutos(   
     IN nome VARCHAR(50),
     IN preco DECIMAL(8,2),
     IN tamanho VARCHAR(50),
     IN id_categoria INT,
     IN id_recheio INT 
-)
-BEGIN
+) BEGIN
     IF id_recheio IS NULL THEN
         SET id_recheio = null; 
     END IF;
@@ -132,31 +133,32 @@ BEGIN
         INSERT INTO produto (nome, preco, tamanho, id_categoria, id_recheio) 
         VALUES (nome, preco, tamanho, id_categoria, id_recheio);
     END IF;
-END !!
-
+END !PROCEDIMENTO!
+-- Procedimento para associar recheios a produtos na tabela de recheio_produto.
 CREATE PROCEDURE AddRecheios(
     IN id_recheio INT,
     IN id_produto INT
-)
-BEGIN
+) BEGIN
     INSERT INTO recheio_produto (id_produto, id_recheio) 
     VALUES (id_produto, id_recheio);
-END !!
+END !PROCEDIMENTO!
 DELIMITER ;
 
-## inserindo dados dos clientes
-
+-- inserindo dados dos clientes
 CALL AddClientes('Rodigo da Silva', 'Rodrigo', '123.456.784-01', '2001-03-09', '235123431', 'rodrigo@email.com', 'humildes', 'FSA', 'BA');
 CALL AddClientes('Carlos henrique', 'Carlos', '345.609.342-01', '2003-08-03', '750304859', 'carlos@email.com', 'Aviario', 'FSA', 'BA');
 CALL AddClientes('Yasmin nere', 'Yasmin', '503.987.545-01', '2004-03-14', '75395030', 'carlos@email.com', 'feira 7', 'FSA', 'BA');
 CALL AddClientes('Lucia Oliveira', 'Lucia', '789.456.123-45', '2008-09-25', '987654321', 'lucia@email.com', 'Centro', 'FSA', 'BA');
-CALL AddClientes('Pedro Santos', 'Pedro', '987.654.321-01', '2010-03-12', '654321987', 'pedro@email.com', 'Bairro Alegre', 'FSA', 'BA');
+CALL AddClientes('0 Santos', '0', '987.654.321-01', '2010-03-12', '654321987', '0@email.com', 'Bairro Alegre', 'FSA', 'BA');
 CALL AddClientes('Camila Silva', 'Camila', '234.567.890-12', '2009-08-18', '876543210', 'camila@email.com', 'Nova Cidade', 'FSA', 'BA');
 CALL AddClientes('Gustavo Henrique', 'Gustavo', '123.456.789-01', '2005-05-09', '123456789', 'gustavo@email.com', 'Centro', 'FSA', 'BA');
 CALL AddClientes('Vitor Hugo', 'Vitor', '345.609.456-01', '2000-04-03', '12333124', 'vitor@email.com', 'Aviario', 'FSA', 'BA');
+CALL AddClientes('Luiz Felipe', 'Luiz', '123.456.123-45', '2008-09-25', '987654321', 'luiz@email.com', 'Centro', 'FSA', 'BA');
+CALL AddClientes('Julio Henrique', 'Julio', '768.609.456-01', '2000-04-03', '12333124', 'vitor@email.com', 'Aviario', 'FSA', 'BA');
+CALL AddClientes('Fabio Felipe', 'Fabio', '987.456.123-45', '2008-09-25', '987654321', 'luiz@email.com', 'Centro', 'FSA', 'BA');
+CALL AddClientes('Zélia Silva', 'Zélia', '433.609.456-01', '2000-04-03', '12333124', 'vitor@email.com', 'Aviario', 'FSA', 'BA');
 
-## inserindo dados dos produtos
-
+-- inserindo dados dos produtos
 CALL AddProdutos('Suco de laranja', 2.00, '1L', 5, null);
 CALL AddProdutos('Suco de laranja', 5.00, '2L', 5, null);
 CALL AddProdutos('Refrigerante de cola', 3.50, '1L', 5, null);
@@ -178,8 +180,7 @@ CALL AddProdutos('Pastel de dora aventureira', 6.50, 'M', 4, 7);
 CALL AddProdutos('Pastel de bacon', 6.50, 'M', 4, 11);
 CALL AddProdutos('Pastel de bacon grande', 7.00, 'G', 4, 11);
 
-## inserindo dados dos recheios
-
+-- inserindo dados dos recheios
 CALL AddRecheios(1, 1);
 CALL AddRecheios(2, 2);
 CALL AddRecheios(3, 3);
@@ -191,8 +192,3 @@ CALL AddRecheios(8, 8);
 CALL AddRecheios(9, 9);
 CALL AddRecheios(10, 10);
 CALL AddRecheios(11, 11);
-
-SELECT * FROM recheio_produto;
-SELECT * FROM categoria;
-SELECT * FROM recheio; 
-SELECT * FROM produto;
