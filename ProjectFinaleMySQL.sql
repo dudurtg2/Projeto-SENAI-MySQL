@@ -1,5 +1,6 @@
 CREATE DATABASE  Pastelaria;
 USE Pastelaria;
+-- cria tabela
 
 CREATE TABLE clientes (
     id_cliente int primary key auto_increment,
